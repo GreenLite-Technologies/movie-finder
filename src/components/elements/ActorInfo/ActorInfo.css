@@ -1,0 +1,34 @@
+.rmdb-actorinfo {
+  display: flex;
+  width: 100vw;
+}
+
+.rmdb-actorinfo-thumb {
+}
+
+.rmdb-actorinfo-thumb > img {
+  width: auto;
+  max-height: 400px;
+}
+
+.rmdb-actorinfo-details {
+}
+
+.rmdb-actorinfo-name {
+}
+
+.rmdb-actorinfo-bio {
+}
+
+.rmdb-actorinfo-otherfilms {
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
+.rmdb-actorinfo-details-item {
+}
+
+/*potential to share css */
+pre {
+  white-space: pre-wrap;
+}

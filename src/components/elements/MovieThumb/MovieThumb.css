@@ -1,0 +1,46 @@
+.rmdb-moviethumb {
+  width: 100%;
+  height: 100%;
+  background-color: #999999;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.rmdb-moviethumb img {
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s;
+  object-fit: cover;
+  border-radius: 20px;
+  transition: all 0.3s;
+  will-change: transform;
+}
+
+.rmdb-moviethumb a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.rmdb-moviethumb a:hover img {
+  transform: scale(1.05);
+}
+
+.rmdb-moviethumb .title {
+  bottom: 0;
+  color: white;
+  font-size: 24px;
+  margin-bottom: 10px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  opacity: 0.8;
+}
