@@ -3,16 +3,10 @@ import FontAwesome from "react-fontawesome";
 import "./SearchBar.css";
 
 import { debounce } from "lodash";
+import { useFilters } from "./useFilters";
 
 export default function SearchBar({ callback, wait = 500 }) {
-  const [value, setValue] = useState("");
-
-  const debouncedCallback = useCallback(debounce(v => callback(v), wait), [callback]);
-  const handleSearch = useCallback(({ target: { value: localValue }}) => {
-    // this will update input field val everytime user hits key
-    setValue(localValue);
-    debouncedCallback(localValue);
-  });
+  const { filters, onChange } = useFilters(callback, wait);
 
   return (
     <div className="rmdb-searchbar">
@@ -22,8 +16,32 @@ export default function SearchBar({ callback, wait = 500 }) {
           type="text"
           className="rmdb-searchbar-input"
           placeholder="Search"
-          onChange={handleSearch}
-          value={value}
+          onChange={onChange}
+          value={filters.searchTerm}
+          name="searchTerm"
+        />
+      </div>
+
+      <div className="rmdb-searchbar-content">
+        <FontAwesome className="rmdb-fa-search" name="search" size="2x" />
+        <input
+          type="text"
+          className="rmdb-searchbar-input"
+          placeholder="Min Year"
+          onChange={onChange}
+          value={filters.minYear}
+          name="minYear"
+        />
+      </div>
+      <div className="rmdb-searchbar-content">
+        <FontAwesome className="rmdb-fa-search" name="search" size="2x" />
+        <input
+          type="text"
+          className="rmdb-searchbar-input"
+          placeholder="Max Year"
+          onChange={onChange}
+          value={filters.maxYear}
+          name="maxYear"
         />
       </div>
     </div>

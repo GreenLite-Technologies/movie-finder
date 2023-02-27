@@ -31,17 +31,21 @@ class Home extends Component {
     }
   }
 
-  searchItems = async (searchTerm) => {
+  searchItems = async (filters) => {
     let endpoint = "";
     this.setState({
       movies: [],
       loading: true,
-      searchTerm: searchTerm,
+      filters,
     });
-    if (searchTerm === "") {
+    if (
+      this.state.filters.searchTerm === "" &&
+      this.state.filters.minYear === "" &&
+      this.state.filters.maxYear === ""
+    ) {
       endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=1`;
     } else {
-      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${searchTerm}`;
+      endpoint = `${API_URL}discover/movie?api_key=${API_KEY}&language=en-US&query=${filters.searchTerm}&release_date.gte=${filters.minYear}&release_date.lte=${filters.maxYear}`;
     }
 
     this.fetchItems(endpoint);
@@ -55,7 +59,7 @@ class Home extends Component {
     let currentlyPlaying = [];
     if (this.state.currentPage === 1) {
       currentlyPlaying = await this.fetchCurrentlyPlaying(
-        this.state.searchTerm
+        this.state.filters.searchTerm
       );
     }
 
@@ -65,12 +69,20 @@ class Home extends Component {
   loadMoreItems = async () => {
     let endpoint = "";
     this.setState({ loading: true });
-    if (this.state.searchTerm === "") {
-      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${this.state.currentPage + 1
-        }`;
+    if (
+      this.state.filters.searchTerm === "" &&
+      this.state.filters.minYear === "" &&
+      this.state.filters.maxYear === ""
+    ) {
+      endpoint = `${API_URL}movie/popular?api_key=${API_KEY}&language=en-US&page=${
+        this.state.currentPage + 1
+      }`;
     } else {
-      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${this.state.searchTerm
-        }&pages=${this.state.currentPage + 1}`;
+      endpoint = `${API_URL}search/movie?api_key=${API_KEY}&language=en-US&query=${
+        this.state.filters.searchTerm
+      }&release_date.lte=${this.state.filters.minYear}&release_date.gte=${
+        this.state.filters.maxYear
+      }&pages=${this.state.currentPage + 1}`;
     }
 
     this.fetchItems(endpoint);
@@ -90,28 +102,27 @@ class Home extends Component {
       );
     }
 
-    return JSON.parse(
-      localStorage.getItem("CurrentlyPlaying")
-    ).results.filter(({ original_title }) =>
-      original_title.toLocaleLowerCase().match(searchTerm.toLocaleLowerCase())
+    return JSON.parse(localStorage.getItem("CurrentlyPlaying")).results.filter(
+      ({ original_title }) =>
+        original_title.toLocaleLowerCase().match(searchTerm.toLocaleLowerCase())
     );
   };
 
   updateMovies = (currentlyPlaying, searchResult) => {
-    const { movies, heroImage, searchTerm } = this.state;
+    const { movies, heroImage, filters } = this.state;
     try {
       this.setState(
         {
           currentlyPlaying,
           // this will copy old movies and append new
-          movies: [...movies, ...searchResult.results],
+          movies: [...searchResult.results],
           heroImage: heroImage || searchResult.results[0],
           loading: false,
           currentPage: searchResult.page,
           totalPages: searchResult.total_pages,
         },
         () => {
-          if (searchTerm !== "") {
+          if (filters.searchTerm !== "") {
             // store the data in local storage after state updates
             localStorage.setItem("HomeState", JSON.stringify(this.state));
           }
@@ -155,7 +166,10 @@ class Home extends Component {
                   <MovieThumb
                     key={i}
                     clickable={true}
-                    image={element.poster_path && `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`}
+                    image={
+                      element.poster_path &&
+                      `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`
+                    }
                     movieId={element.id}
                     movieName={element.original_title}
                   />
@@ -172,7 +186,10 @@ class Home extends Component {
                 <MovieThumb
                   key={i}
                   clickable={true}
-                  image={element.poster_path && `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`}
+                  image={
+                    element.poster_path &&
+                    `${IMAGE_BASE_URL}${POSTER_SIZE}${element.poster_path}`
+                  }
                   movieId={element.id}
                   movieName={element.original_title}
                 />
